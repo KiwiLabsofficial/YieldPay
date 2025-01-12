@@ -1,6 +1,5 @@
 import React from 'react';
 import { Menu, X } from 'lucide-react';
-import { useNavigate } from "react-router-dom";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -12,11 +11,6 @@ const Navigation = () => {
     { label: 'Testimonials', href: '#testimonials' },
     { label: 'Metrics', href: '#metrics' },
   ];
-  const navigate = useNavigate();
- 
-  const handleLaunchClick = () => {
-    navigate("/dapp"); // Navigate to /app
-  };
 
   return (
     <nav className="fixed w-full bg-gray-900/95 backdrop-blur supports-[backdrop-filter]:bg-gray-900/80 z-50">
@@ -38,7 +32,7 @@ const Navigation = () => {
                   {item.label}
                 </a>
               ))}
-              <button onClick={handleLaunchClick} className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
+              <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors">
                 Launch Dapp
               </button>
             </div>
@@ -72,7 +66,7 @@ const Navigation = () => {
             ))}
             <button 
               className="w-full bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
-              onClick={handleLaunchClick}
+              onClick={() => setIsOpen(false)}
             >
               Launch Dapp
             </button>

@@ -1,80 +1,45 @@
-import React from 'react';
-import { Wallet, TrendingUp, Clock } from 'lucide-react';
-import StatCard from '../components/stats/StatCard';
-import YieldChart from '../components/charts/YieldChart';
-import ActivityItem from '../components/activity/ActivityItem';
-import Card from '../components/Card';
+import { StatsGrid } from '../components/dashboard/StatsGrid';
+import { YieldChart } from '../components/dashboard/YieldChart';
+import { ActivityList } from '../components/dashboard/ActivityList';
+import  Button  from '../components/Button';
+import { useDashboard } from '../../hooks/useDashboard';
+import { formatEther } from 'viem';
 
-const stats = [
-  { 
-    label: 'Total Balance',
-    value: '$5,240.50',
-    icon: Wallet,
-    change: '+12.5%'
-  },
-  {
-    label: 'Total Yield Earned',
-    value: '$320.75',
-    icon: TrendingUp,
-    change: '+8.2%'
-  },
-  {
-    label: 'Active Subscriptions',
-    value: '3',
-    icon: Clock,
-    change: '0%'
-  },
-];
+export default function DashboardPage() {
+  const { stats, recentActivity, isLoading, handleClaimRewards, pendingRewards } = useDashboard();
 
-const recentActivity = [
-  {
-    icon: TrendingUp,
-    title: 'Yield Generated',
-    timestamp: '2 hours ago',
-    amount: '+$1.25'
-  },
-  {
-    icon: TrendingUp,
-    title: 'Yield Generated',
-    timestamp: '4 hours ago',
-    amount: '+$0.95'
-  },
-  {
-    icon: TrendingUp,
-    title: 'Yield Generated',
-    timestamp: '6 hours ago',
-    amount: '+$1.10'
-  },
-];
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+      </div>
+    );
+  }
 
-const DashboardPage = () => {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold text-white mb-8">Dashboard</h1>
-      
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        {stats.map((stat) => (
-          <StatCard key={stat.label} {...stat} />
-        ))}
+    <div className="p-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+        {pendingRewards > BigInt(0) && (
+          <Button 
+            onClick={handleClaimRewards}
+            className="bg-green-600 hover:bg-green-700"
+          >
+            Claim {formatEther(pendingRewards)} BNB Rewards
+          </Button>
+        )}
       </div>
 
-      {/* Chart */}
-      <div className="mb-8">
-        <YieldChart />
-      </div>
+      <StatsGrid stats={stats} />
 
-      {/* Recent Activity */}
-      <Card>
-        <h2 className="text-lg font-semibold text-white mb-4">Recent Activity</h2>
-        <div className="space-y-1">
-          {recentActivity.map((activity, index) => (
-            <ActivityItem key={index} {...activity} />
-          ))}
-        </div>
-      </Card>
+      <YieldChart 
+        data={recentActivity.map(activity => ({
+          timestamp: activity.timestamp,
+          amount: activity.amount
+        }))} 
+      />
+
+      <ActivityList activities={recentActivity} />
     </div>
   );
-};
-
-export default DashboardPage;
+}
